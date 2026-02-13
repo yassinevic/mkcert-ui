@@ -12,8 +12,12 @@ RUN npm run build
 # ------------------------------------
 # Stage 2: Build Backend
 # ------------------------------------
-FROM node:20-alpine AS backend-builder
+FROM node:20 AS backend-builder
 WORKDIR /app/backend
+
+# Install build dependencies for native modules (sqlite3)
+RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
+
 COPY backend/package*.json ./
 # Install ALL dependencies (including dev) to build verify
 RUN npm ci
@@ -25,6 +29,14 @@ RUN npm run build
 # ------------------------------------
 # Use slim image for smaller size, but need curl/libnss3-tools for mkcert
 FROM node:20-slim
+
+# Add metadata labels
+LABEL org.opencontainers.image.title="mkcert-ui"
+LABEL org.opencontainers.image.description="Modern web UI for managing mkcert local development certificates"
+LABEL org.opencontainers.image.url="https://github.com/yassinevic/mkcert-ui"
+LABEL org.opencontainers.image.source="https://github.com/yassinevic/mkcert-ui"
+LABEL org.opencontainers.image.vendor="yassinevic"
+LABEL org.opencontainers.image.licenses="MIT"
 
 # Install system dependencies (mkcert needs certutil)
 RUN apt-get update && apt-get install -y \
