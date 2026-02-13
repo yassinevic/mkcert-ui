@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  mkcert-ui:
+    build: .
+    container_name: mkcert-ui
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./certs:/app/backend/certs
+      - ./data:/app/backend/data
+    environment:
+      - CERT_PATH=/app/backend/certs
+      - DB_PATH=/app/backend/data/database.sqlite
+    restart: unless-stopped
