@@ -19,7 +19,6 @@ import {
   AlertTriangle,
   AlertCircle,
   CheckCircle2,
-  Copy,
 } from "lucide-react";
 import "./Certificates.css";
 
