@@ -1,0 +1,31 @@
+stages:
+  - build
+
+variables:
+  # The name of your Docker Hub repository
+  DOCKER_IMAGE_NAME: yassinevic/mkcert-ui
+  # Use Docker-in-Docker
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
+
+docker-build:
+  stage: build
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
+  before_script:
+    # Login to Docker Hub using environment variables set in GitLab CI/CD settings
+    - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
+  script:
+    # Build the image with both 'latest' and the short commit SHA as tags
+    - docker build -t $DOCKER_IMAGE_NAME:latest -t $DOCKER_IMAGE_NAME:$CI_COMMIT_SHORT_SHA .
+    # Push both tags to Docker Hub
+    - docker push $DOCKER_IMAGE_NAME:latest
+    - docker push $DOCKER_IMAGE_NAME:$CI_COMMIT_SHORT_SHA
+  rules:
+    # Only run on pushes to the main or master branch
+    - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "master"
+      when: always
+    # Also run on tags
+    - if: $CI_COMMIT_TAG
+      when: always
