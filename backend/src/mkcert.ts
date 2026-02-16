@@ -41,28 +41,86 @@ export class MkCert {
             logger.debug('Checking if mkcert CA is trusted', { platform: process.platform });
 
             if (process.platform === 'win32') {
-                // Check Windows trust store for mkcert CA
-                const { stdout } = await execAsync('powershell -Command "Get-ChildItem -Path Cert:\\CurrentUser\\Root | Select-Object -ExpandProperty Subject"');
-                const isTrusted = stdout.includes('CN=mkcert');
-                logger.debug('Windows CA trust status', { isTrusted });
-                return isTrusted;
+                // Retry logic for Windows - cert store might not update immediately
+                const maxRetries = 3;
+                let lastError: any = null;
+                
+                for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                    try {
+                        logger.debug(`Trust check attempt ${attempt}/${maxRetries}`);
+                        
+                        // Primary method: Check CurrentUser store via PowerShell (this is where mkcert installs on Windows)
+                        const cmd = `powershell -NoProfile -Command "Get-ChildItem -Path 'Cert:\\\\CurrentUser\\\\Root' -ErrorAction SilentlyContinue | Where-Object { $_.Subject -match 'mkcert' } | Measure-Object | Select-Object -ExpandProperty Count"`;
+                        const { stdout } = await execAsync(cmd, { timeout: 5000 });
+                        const count = parseInt(stdout.trim(), 10) || 0;
+                        
+                        logger.info('Windows CA trust status', { 
+                            method: 'PowerShell CurrentUser\\Root',
+                            isTrusted: count > 0, 
+                            certificateCount: count,
+                            attempt
+                        });
+                        
+                        if (count > 0) {
+                            return true;
+                        }
+
+                        // If not found in CurrentUser, check LocalMachine as fallback
+                        const cmd2 = `powershell -NoProfile -Command "Get-ChildItem -Path 'Cert:\\\\LocalMachine\\\\Root' -ErrorAction SilentlyContinue | Where-Object { $_.Subject -match 'mkcert' } | Measure-Object | Select-Object -ExpandProperty Count"`;
+                        const { stdout: stdout2 } = await execAsync(cmd2, { timeout: 5000 });
+                        const count2 = parseInt(stdout2.trim(), 10) || 0;
+                        
+                        logger.info('Windows CA trust status (LocalMachine fallback)', { 
+                            isTrusted: count2 > 0, 
+                            certificateCount: count2,
+                            attempt
+                        });
+                        
+                        if (count2 > 0) {
+                            return true;
+                        }
+                        
+                        // If this is the first attempt and cert not found, wait and retry
+                        if (attempt < maxRetries) {
+                            logger.debug(`Certificate not found yet, retrying in 1 second...`);
+                            await new Promise(resolve => setTimeout(resolve, 1000));
+                        }
+                        
+                    } catch (error: any) {
+                        logger.warn(`Trust check attempt ${attempt} failed`, {
+                            error: error.message
+                        });
+                        lastError = error;
+                        
+                        if (attempt < maxRetries) {
+                            await new Promise(resolve => setTimeout(resolve, 1000));
+                        }
+                    }
+                }
+                
+                logger.info('mkcert CA NOT found after retries');
+                return false;
+                
             }
 
             if (process.platform === 'linux') {
-                // On Linux, we check if the CA root exists. 
-                // In a Docker environment, mkcert -install handles the heavy lifting, 
-                // but we can verify by checking the presence of the root CA.
-                const caRoot = await this.getCARoot();
-                if (!caRoot) return false;
+                try {
+                    // On Linux, check if the CA is in the system trust store
+                    // Try to find mkcert CA in /etc/ssl/certs/
+                    const { stdout } = await execAsync('openssl x509 -in /home/$USER/.local/share/mkcert/rootCA.pem -text -noout 2>/dev/null || echo "NOT_FOUND"', { timeout: 5000, shell: '/bin/bash' });
+                    const isTrusted = !stdout.includes('NOT_FOUND');
+                    logger.info('Linux CA status', { isTrusted });
+                    return isTrusted;
+                } catch (error) {
+                    logger.warn('Linux CA trust check failed, assuming not trusted', error);
+                    return false;
+                }
+            }
 
-                const rootCAPath = path.join(caRoot, 'rootCA.pem');
-                const isTrusted = fs.existsSync(rootCAPath);
-
-                logger.debug('Linux CA trust status (based on root file existence)', {
-                    isTrusted,
-                    rootCAPath
-                });
-                return isTrusted;
+            if (process.platform === 'darwin') {
+                // macOS support - check security framework
+                logger.info('macOS CA trust status check not fully implemented');
+                return false;
             }
 
             return false;
@@ -80,6 +138,11 @@ export class MkCert {
             if (stderr) {
                 logger.warn('mkcert install stderr', { stderr });
             }
+            
+            // Wait a bit for Windows to update the cert store before returning
+            logger.debug('Waiting for certificate store update...');
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
             return stdout;
         } catch (error: any) {
             logger.error('Failed to install mkcert CA', {
@@ -100,6 +163,11 @@ export class MkCert {
             if (stderr) {
                 logger.warn('mkcert uninstall stderr', { stderr });
             }
+            
+            // Wait a bit for Windows to update the cert store before returning
+            logger.debug('Waiting for certificate store update...');
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
             return stdout;
         } catch (error: any) {
             logger.error('Failed to uninstall mkcert CA', {
