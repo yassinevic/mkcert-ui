@@ -4,8 +4,12 @@ import {
   createCertificate,
   deleteCertificate,
   renewCertificate,
-  getDownloadUrl,
 } from "../services/api";
+import {
+  downloadAllCertificates,
+  downloadCertificate,
+} from "../services/download";
+import { getApiErrorMessage } from "../services/errors";
 import { useTerminal } from "../hooks/useTerminal";
 import {
   Plus,
@@ -98,11 +102,7 @@ export function Certificates() {
       setDomainInput("");
       await loadCerts();
     } catch (error: unknown) {
-      const axiosError = error as any;
-      const errorMessage =
-        axiosError.response?.data?.error ||
-        axiosError.message ||
-        "Unknown error";
+      const errorMessage = getApiErrorMessage(error);
       addMessage(`✗ Failed to create certificate`, "error");
       addMessage(`Error: ${errorMessage}`, "error");
       alert(`Failed to create certificate: ${errorMessage}`);
@@ -121,11 +121,7 @@ export function Certificates() {
       addMessage(`✓ Certificate renewed successfully`, "success");
       await loadCerts();
     } catch (error: unknown) {
-      const axiosError = error as any;
-      const errorMessage =
-        axiosError.response?.data?.error ||
-        axiosError.message ||
-        "Unknown error";
+      const errorMessage = getApiErrorMessage(error);
       addMessage(`✗ Failed to renew certificate`, "error");
       addMessage(`Error: ${errorMessage}`, "error");
       alert(`Failed to renew certificate: ${errorMessage}`);
@@ -135,7 +131,22 @@ export function Certificates() {
   };
 
   const handleDownload = (id: number) => {
-    window.location.href = getDownloadUrl(id);
+    downloadCertificate(id);
+  };
+
+  const handleDownloadAll = async () => {
+    addMessage("mkcert -export-all", "command");
+    addMessage("Exporting all certificates...");
+
+    try {
+      const { filename } = await downloadAllCertificates();
+      addMessage(`✓ Export download started (${filename})`, "success");
+    } catch (error: unknown) {
+      const errorMessage = getApiErrorMessage(error);
+      addMessage("✗ Failed to export certificates", "error");
+      addMessage(`Error: ${errorMessage}`, "error");
+      alert(`Failed to export certificates: ${errorMessage}`);
+    }
   };
 
   const handleDelete = async (id: number, name: string) => {
@@ -222,12 +233,17 @@ export function Certificates() {
             <h1>Certificate Health Overview</h1>
             <p>Visual status tracking for local SSL certificates</p>
           </div>
-          <button
-            className="btn btn-primary"
-            onClick={() => setShowModal(true)}
-          >
-            <Plus size={18} /> Create New Certificate
-          </button>
+          <div className="header-actions">
+            <button className="btn btn-secondary" onClick={handleDownloadAll}>
+              <Download size={18} /> Export All
+            </button>
+            <button
+              className="btn btn-primary"
+              onClick={() => setShowModal(true)}
+            >
+              <Plus size={18} /> Create New Certificate
+            </button>
+          </div>
         </div>
 
         <div className="toolbar">

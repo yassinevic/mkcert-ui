@@ -436,6 +436,89 @@ app.get('/api/certificates/:id/download', async (req: Request, res: Response) =>
     }
 });
 
+// Download All Certificates Zip
+app.get('/api/exportall', async (req: Request, res: Response) => {
+    logger.info('Bulk certificate export requested', { requestId: req.requestId });
+
+    try {
+        logger.debug('Fetching all certificates from database for export');
+        const certs = await db.all('SELECT * FROM certificates');
+
+        if (!certs || certs.length === 0) {
+            logger.warn('No certificates found for bulk export');
+            return res.status(404).json({ error: 'No certificates found' });
+        }
+
+        const filesToArchive: Array<{ filePath: string; name: string }> = [];
+
+        for (const cert of certs) {
+            if (cert.path_cert && fs.existsSync(cert.path_cert)) {
+                filesToArchive.push({
+                    filePath: cert.path_cert,
+                    name: path.basename(cert.path_cert)
+                });
+            } else {
+                logger.warn('Certificate file missing during bulk export', {
+                    certId: cert.id,
+                    certPath: cert.path_cert
+                });
+            }
+
+            if (cert.path_key && fs.existsSync(cert.path_key)) {
+                filesToArchive.push({
+                    filePath: cert.path_key,
+                    name: path.basename(cert.path_key)
+                });
+            } else {
+                logger.warn('Key file missing during bulk export', {
+                    certId: cert.id,
+                    keyPath: cert.path_key
+                });
+            }
+        }
+
+        if (filesToArchive.length === 0) {
+            logger.warn('No certificate files found on disk for bulk export');
+            return res.status(404).json({ error: 'No certificate files found' });
+        }
+
+        const zipName = 'all_certificates.zip';
+        res.setHeader('Content-Type', 'application/zip');
+        res.setHeader('Content-Disposition', `attachment; filename="${zipName}"`);
+
+        const archive = archiver('zip', {
+            zlib: { level: 9 }
+        });
+
+        archive.on('error', (err) => {
+            logger.error('Archive error during bulk export', {
+                error: err.message,
+                stack: err.stack
+            });
+            res.status(500).send({ error: err.message });
+        });
+
+        archive.pipe(res);
+
+        for (const file of filesToArchive) {
+            archive.file(file.filePath, { name: file.name });
+        }
+
+        await archive.finalize();
+        logger.info('Bulk certificate export completed successfully', {
+            fileCount: filesToArchive.length,
+            zipName
+        });
+    } catch (error: any) {
+        logger.error('Error in GET /api/exportall endpoint', {
+            error: error.message,
+            stack: error.stack,
+            requestId: req.requestId
+        });
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Renew Certificate
 app.post('/api/certificates/:id/renew', async (req: Request, res: Response) => {
     const { id } = req.params;

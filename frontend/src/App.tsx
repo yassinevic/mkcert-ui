@@ -1,8 +1,7 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Sidebar } from "./components/Sidebar";
 import { Certificates } from "./pages/Certificates";
 import { Authorities } from "./pages/Authorities";
-import { Settings } from "./pages/Settings";
 import { Terminal } from "./components/Terminal";
 import { TerminalProvider } from "./context/TerminalContext";
 import { ThemeProvider } from "./context/ThemeContext";
@@ -19,7 +18,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Certificates />} />
                 <Route path="/authorities" element={<Authorities />} />
-                <Route path="/settings" element={<Settings />} />
+                <Route path="/settings" element={<Navigate to="/authorities" replace />} />
               </Routes>
               <Terminal />
             </main>

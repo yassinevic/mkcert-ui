@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { Logo } from "./Logo";
-import { FileText, Settings, Award, Moon, Sun } from "lucide-react";
+import { FileText, Award, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getStatus } from "../services/api";
 import { useTheme } from "../hooks/useTheme";
@@ -29,7 +29,6 @@ export function Sidebar() {
   const links = [
     { to: "/", icon: FileText, label: "Certificates" },
     { to: "/authorities", icon: Award, label: "Authorities" },
-    { to: "/settings", icon: Settings, label: "Settings" },
   ];
 
   return (

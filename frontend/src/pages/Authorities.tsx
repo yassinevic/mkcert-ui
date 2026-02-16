@@ -251,6 +251,26 @@ export function Authorities() {
           </div>
         </div>
 
+        <div className="settings-section">
+          <h3>System Details</h3>
+          <div className="settings-grid">
+            <div className="detail-item">
+              <Folder size={16} />
+              <div className="detail-text">
+                <label>Root CA Location</label>
+                <code>{status.root_ca || "N/A"}</code>
+              </div>
+            </div>
+            <div className="detail-item">
+              <Folder size={16} />
+              <div className="detail-text">
+                <label>Certificate Storage Path</label>
+                <code>{status.cert_path || "N/A"}</code>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="help-section">
           <h3>
             <Info size={18} /> How it works

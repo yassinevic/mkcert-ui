@@ -1,8 +1,13 @@
 
 import axios from 'axios';
 
+const isProd = import.meta.env.PROD;
+const apiBaseUrl = isProd ? '/api' : 'http://localhost:3001/api';
+const downloadBaseUrl = apiBaseUrl.replace(/\/?api$/, '');
+const buildDownloadUrl = (path: string) => `${downloadBaseUrl}${path}`;
+
 const api = axios.create({
-    baseURL: import.meta.env.PROD ? '/api' : 'http://localhost:3001/api',
+    baseURL: apiBaseUrl,
 });
 
 export const getStatus = async () => (await api.get('/status')).data;
@@ -13,12 +18,15 @@ export const createCertificate = async (domains: string[], name: string) => (awa
 export const deleteCertificate = async (id: number) => (await api.delete(`/certificates/${id}`)).data;
 export const renewCertificate = async (id: number) => (await api.post(`/certificates/${id}/renew`)).data;
 export const getDownloadUrl = (id: number) => {
-    const base = import.meta.env.PROD ? '' : 'http://localhost:3001';
-    return `${base}/api/certificates/${id}/download`;
+    return buildDownloadUrl(`/api/certificates/${id}/download`);
 };
+export const getAllCertificatesDownloadUrl = () => {
+    return buildDownloadUrl('/api/exportall');
+};
+export const exportAllCertificates = async () =>
+    api.get('/exportall', { responseType: 'blob' });
 export const getCADownloadUrl = () => {
-    const base = import.meta.env.PROD ? '' : 'http://localhost:3001';
-    return `${base}/api/ca-download`;
+    return buildDownloadUrl('/api/ca-download');
 };
 
 export default api;
