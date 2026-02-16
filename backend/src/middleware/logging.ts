@@ -44,7 +44,6 @@ export function requestLoggingMiddleware(req: Request, res: Response, next: Next
         
         // Log request body for POST/PUT/PATCH methods
         if (['POST', 'PUT', 'PATCH'].includes(req.method)) {
-            // Don't log sensitive data in body
             const safeBody = { ...req.body };
             requestInfo.body = safeBody;
         }

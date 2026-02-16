@@ -18,7 +18,7 @@ const logLevelMap: Record<string, LogLevel> = {
 };
 
 // Get log level from environment variable, default to INFO
-const currentLogLevel = logLevelMap[process.env.LOG_LEVEL?.toUpperCase() || 'INFO'] ?? LogLevel.INFO;
+const currentLogLevel = logLevelMap[process.env.LOG_LEVEL?.toUpperCase() || 'INFO'] || LogLevel.INFO;
 
 /**
  * Format log message with timestamp and level
