@@ -38,12 +38,34 @@ export class MkCert {
 
     async isCATrusted(): Promise<boolean> {
         try {
-            logger.debug('Checking if mkcert CA is trusted');
-            // Check Windows trust store for mkcert CA
-            const { stdout } = await execAsync('powershell -Command "Get-ChildItem -Path Cert:\\CurrentUser\\Root | Select-Object -ExpandProperty Subject"');
-            const isTrusted = stdout.includes('CN=mkcert');
-            logger.debug('CA trust status checked', { isTrusted });
-            return isTrusted;
+            logger.debug('Checking if mkcert CA is trusted', { platform: process.platform });
+
+            if (process.platform === 'win32') {
+                // Check Windows trust store for mkcert CA
+                const { stdout } = await execAsync('powershell -Command "Get-ChildItem -Path Cert:\\CurrentUser\\Root | Select-Object -ExpandProperty Subject"');
+                const isTrusted = stdout.includes('CN=mkcert');
+                logger.debug('Windows CA trust status', { isTrusted });
+                return isTrusted;
+            }
+
+            if (process.platform === 'linux') {
+                // On Linux, we check if the CA root exists. 
+                // In a Docker environment, mkcert -install handles the heavy lifting, 
+                // but we can verify by checking the presence of the root CA.
+                const caRoot = await this.getCARoot();
+                if (!caRoot) return false;
+
+                const rootCAPath = path.join(caRoot, 'rootCA.pem');
+                const isTrusted = fs.existsSync(rootCAPath);
+
+                logger.debug('Linux CA trust status (based on root file existence)', {
+                    isTrusted,
+                    rootCAPath
+                });
+                return isTrusted;
+            }
+
+            return false;
         } catch (e) {
             logger.warn('Failed to check CA trust status', e);
             return false;
@@ -92,7 +114,7 @@ export class MkCert {
 
     async createCert(domains: string[], outputDir: string, name?: string): Promise<{ certPath: string, keyPath: string }> {
         logger.info('Creating certificate', { domains, outputDir, name });
-        
+
         // Validate output directory
         if (!fs.existsSync(outputDir)) {
             logger.debug('Creating output directory', { outputDir });
@@ -107,22 +129,22 @@ export class MkCert {
         const cmd = `mkcert -cert-file "${certFile}" -key-file "${keyFile}" ${domainArgs}`;
 
         logger.info('Executing mkcert command', { command: cmd });
-        
+
         try {
             const { stdout, stderr } = await execAsync(cmd);
-            
+
             if (stdout) {
                 logger.debug('mkcert command output', { stdout });
             }
             if (stderr) {
                 logger.warn('mkcert command stderr', { stderr });
             }
-            
+
             // Verify files were created
             if (!fs.existsSync(certFile) || !fs.existsSync(keyFile)) {
                 throw new Error('Certificate files were not created');
             }
-            
+
             logger.info('Certificate created successfully', { certFile, keyFile });
             return { certPath: certFile, keyPath: keyFile };
         } catch (error: any) {
@@ -139,14 +161,14 @@ export class MkCert {
 
     async getCertExpiry(certPath: string): Promise<string | null> {
         logger.debug('Parsing certificate expiry date', { certPath });
-        
+
         try {
             // Validate file exists
             if (!fs.existsSync(certPath)) {
                 logger.warn('Certificate file does not exist', { certPath });
                 return null;
             }
-            
+
             const certPem = fs.readFileSync(certPath, 'utf8');
             const cert = forge.pki.certificateFromPem(certPem);
             const expiry = cert.validity.notAfter.toISOString();
