@@ -110,8 +110,8 @@
     "storageLocation": "موقع التخزين",
     "openFolderUnsupported": "فتح المجلد غير مدعوم في المتصفح",
     "trustedByBrowsers": "موثوق من متصفحات النظام",
-    "downloadPem": "تنزيل PEM",
-    "downloadPemTitle": "تنزيل شهادة CA الجذر",
+    "downloadPem": "تنزيل حزمة CA",
+    "downloadPemTitle": "تنزيل شهادة ومفتاح CA الجذر مع نصوص التثبيت",
     "uninstall": "إزالة",
     "uninstallTitle": "إزالة CA الجذر من مخزن الثقة",
     "stats": {

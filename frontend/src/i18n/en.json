@@ -110,8 +110,8 @@
     "storageLocation": "Storage Location",
     "openFolderUnsupported": "Opening folder not supported in browser",
     "trustedByBrowsers": "Trusted by System Browsers",
-    "downloadPem": "Download Pem",
-    "downloadPemTitle": "Download Root CA Certificate",
+    "downloadPem": "Download CA Bundle",
+    "downloadPemTitle": "Download Root CA cert/key and install scripts",
     "uninstall": "Uninstall",
     "uninstallTitle": "Uninstall Root CA from System Trust Store",
     "stats": {

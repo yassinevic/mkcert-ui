@@ -140,20 +140,30 @@ export function Authorities() {
           <h1>{t("authorities.title")}</h1>
           <p>{t("authorities.subtitle")}</p>
         </div>
-        <button
-          className="btn btn-primary"
-          onClick={handleInstall}
-          disabled={loading || status.installed}
-        >
-          {loading ? (
-            <RefreshCw className="animate-spin" size={18} />
-          ) : (
-            <ShieldCheck size={18} />
-          )}
-          {status.installed
-            ? t("authorities.installed")
-            : t("authorities.install")}
-        </button>
+        <div className="header-actions">
+          <button
+            className="btn btn-secondary"
+            onClick={handleDownload}
+            disabled={!status.root_ca}
+            title={t("authorities.downloadPemTitle")}
+          >
+            <Download size={18} /> {t("authorities.downloadPem")}
+          </button>
+          <button
+            className="btn btn-primary"
+            onClick={handleInstall}
+            disabled={loading || status.installed}
+          >
+            {loading ? (
+              <RefreshCw className="animate-spin" size={18} />
+            ) : (
+              <ShieldCheck size={18} />
+            )}
+            {status.installed
+              ? t("authorities.installed")
+              : t("authorities.install")}
+          </button>
+        </div>
       </div>
 
       <div className="page-content">

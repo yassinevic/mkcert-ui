@@ -110,8 +110,8 @@
     "storageLocation": "Emplacement de stockage",
     "openFolderUnsupported": "Ouverture du dossier non prise en charge dans le navigateur",
     "trustedByBrowsers": "Approuve par les navigateurs systeme",
-    "downloadPem": "Telecharger PEM",
-    "downloadPemTitle": "Telecharger le certificat de la CA racine",
+    "downloadPem": "Telecharger le bundle CA",
+    "downloadPemTitle": "Telecharger le certificat/cle et les scripts d'installation",
     "uninstall": "Desinstaller",
     "uninstallTitle": "Desinstaller la CA racine du magasin de confiance",
     "stats": {

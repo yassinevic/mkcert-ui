@@ -197,7 +197,7 @@ app.post('/api/uninstall-ca', async (req: Request, res: Response) => {
     }
 });
 
-// Download Root CA Cert
+// Download Root CA Cert + Key
 app.get('/api/ca-download', async (req: Request, res: Response) => {
     try {
         logger.info('Root CA download requested', { requestId: req.requestId });
@@ -208,15 +208,61 @@ app.get('/api/ca-download', async (req: Request, res: Response) => {
         }
 
         const certFile = path.join(rootCAPath, 'rootCA.pem');
-        logger.debug('Checking for root CA file', { certFile });
+        const keyFile = path.join(rootCAPath, 'rootCA-key.pem');
+        logger.debug('Checking for root CA files', { certFile, keyFile });
 
-        if (!fs.existsSync(certFile)) {
-            logger.warn('Root CA file does not exist', { certFile });
-            return res.status(404).json({ error: 'Root CA file not found' });
+        if (!fs.existsSync(certFile) || !fs.existsSync(keyFile)) {
+            logger.warn('Root CA files do not exist', {
+                certFileExists: fs.existsSync(certFile),
+                keyFileExists: fs.existsSync(keyFile)
+            });
+            return res.status(404).json({ error: 'Root CA files not found' });
         }
 
-        logger.info('Sending root CA file for download', { certFile });
-        res.download(certFile, 'rootCA.pem');
+        const zipName = 'root-ca.zip';
+        res.setHeader('Content-Type', 'application/zip');
+        res.setHeader('Content-Disposition', `attachment; filename="${zipName}"`);
+
+        const archive = archiver('zip', {
+            zlib: { level: 9 }
+        });
+
+        archive.on('error', (err) => {
+            logger.error('Archive error during root CA download', {
+                error: err.message,
+                stack: err.stack
+            });
+            res.status(500).send({ error: err.message });
+        });
+
+        const scriptsDir = path.resolve(process.cwd(), 'scripts');
+        const windowsInstallScript = fs.readFileSync(
+            path.join(scriptsDir, 'install-windows.ps1'),
+            'utf8'
+        );
+        const windowsCmdScript = fs.readFileSync(
+            path.join(scriptsDir, 'install-windows.cmd'),
+            'utf8'
+        );
+        const macInstallScript = fs.readFileSync(
+            path.join(scriptsDir, 'install-macos.sh'),
+            'utf8'
+        );
+        const linuxInstallScript = fs.readFileSync(
+            path.join(scriptsDir, 'install-linux.sh'),
+            'utf8'
+        );
+
+        archive.pipe(res);
+        archive.file(certFile, { name: 'rootCA.pem' });
+        archive.file(keyFile, { name: 'rootCA-key.pem' });
+        archive.append(windowsInstallScript, { name: 'install-windows.ps1' });
+        archive.append(windowsCmdScript, { name: 'install-windows.cmd' });
+        archive.append(macInstallScript, { name: 'install-macos.sh' });
+        archive.append(linuxInstallScript, { name: 'install-linux.sh' });
+
+        await archive.finalize();
+        logger.info('Root CA bundle download completed', { zipName });
     } catch (error: any) {
         logger.error('Error in /api/ca-download endpoint', {
             error: error.message,
