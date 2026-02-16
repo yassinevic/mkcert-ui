@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getCertificates } from "../services/api";
 import { ShieldCheck, Clock } from "lucide-react";
+import { t } from "../i18n";
 import "./Page.css";
 
 export function Dashboard() {
@@ -36,8 +37,8 @@ export function Dashboard() {
   return (
     <div className="page-content">
       <header className="page-header">
-        <h1>Dashboard</h1>
-        <p className="subtitle">Overview of your local certificates</p>
+        <h1>{t("dashboard.title")}</h1>
+        <p className="subtitle">{t("dashboard.subtitle")}</p>
       </header>
 
       <div className="grid-cards">
@@ -46,7 +47,7 @@ export function Dashboard() {
             <ShieldCheck size={32} color="var(--accent-success)" />
           </div>
           <div className="stat-info">
-            <h3>Total Certificates</h3>
+            <h3>{t("dashboard.totalCertificates")}</h3>
             <p className="stat-value">{stats.total}</p>
           </div>
         </div>
@@ -56,7 +57,7 @@ export function Dashboard() {
             <Clock size={32} color="var(--accent-warning)" />
           </div>
           <div className="stat-info">
-            <h3>Expiring Soon</h3>
+            <h3>{t("dashboard.expiringSoon")}</h3>
             <p className="stat-value">{stats.expiring}</p>
           </div>
         </div>
@@ -64,7 +65,7 @@ export function Dashboard() {
 
       {loading && (
         <p style={{ textAlign: "center", color: "var(--text-muted)" }}>
-          Loading data...
+          {t("dashboard.loading")}
         </p>
       )}
 

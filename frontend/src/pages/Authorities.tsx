@@ -6,6 +6,7 @@ import {
   getCADownloadUrl,
 } from "../services/api";
 import { useTerminal } from "../hooks/useTerminal";
+import { t } from "../i18n";
 import {
   ShieldCheck,
   ShieldAlert,
@@ -75,7 +76,7 @@ export function Authorities() {
       const data = await getStatus();
       setStatus(data);
     } catch (error) {
-      console.error("Failed to load status:", error);
+      console.error(t("authorities.errors.load"), error);
     }
   };
 
@@ -85,17 +86,17 @@ export function Authorities() {
 
   const handleInstall = async () => {
     setLoading(true);
-    addMessage("mkcert -install", "command");
-    addMessage("Configuring local CA and system trust stores...");
+    addMessage(t("authorities.terminal.installCommand"), "command");
+    addMessage(t("authorities.terminal.installing"));
     try {
       await installCA();
       await loadStatus();
-      addMessage("✓ Root CA installed successfully!", "success");
-      alert("Root CA installed successfully!");
+      addMessage(t("authorities.terminal.installSuccess"), "success");
+      alert(t("authorities.alerts.installSuccess"));
     } catch (error) {
-      addMessage("✗ Installation failed", "error");
-      console.error("Installation failed:", error);
-      alert("Failed to install CA. Please check terminal for details.");
+      addMessage(t("authorities.terminal.installFail"), "error");
+      console.error(t("authorities.errors.install"), error);
+      alert(t("authorities.alerts.installFail"));
     } finally {
       setLoading(false);
     }
@@ -104,22 +105,22 @@ export function Authorities() {
   const handleUninstall = async () => {
     if (
       !confirm(
-        "Are you sure you want to uninstall the local CA? This will make all existing local certificates untrusted.",
+        t("authorities.confirm.uninstall"),
       )
     )
       return;
     setLoading(true);
-    addMessage("mkcert -uninstall", "command");
-    addMessage("Removing local CA from system trust stores...");
+    addMessage(t("authorities.terminal.uninstallCommand"), "command");
+    addMessage(t("authorities.terminal.uninstalling"));
     try {
       await uninstallCA();
       await loadStatus();
-      addMessage("✓ Root CA uninstalled successfully", "success");
-      alert("Root CA uninstalled successfully.");
+      addMessage(t("authorities.terminal.uninstallSuccess"), "success");
+      alert(t("authorities.alerts.uninstallSuccess"));
     } catch (error) {
-      addMessage("✗ Uninstallation failed", "error");
-      console.error("Uninstallation failed:", error);
-      alert("Failed to uninstall CA.");
+      addMessage(t("authorities.terminal.uninstallFail"), "error");
+      console.error(t("authorities.errors.uninstall"), error);
+      alert(t("authorities.alerts.uninstallFail"));
     } finally {
       setLoading(false);
     }
@@ -129,14 +130,15 @@ export function Authorities() {
     window.location.href = getCADownloadUrl();
   };
 
-  if (!status) return <div className="loading">Loading Authority data...</div>;
+  if (!status)
+    return <div className="loading">{t("authorities.loading")}</div>;
 
   return (
     <div className="authorities-page">
       <div className="page-header">
         <div className="header-title">
-          <h1>Certificate Authorities</h1>
-          <p>Management and verification of local trusted roots</p>
+          <h1>{t("authorities.title")}</h1>
+          <p>{t("authorities.subtitle")}</p>
         </div>
         <button
           className="btn btn-primary"
@@ -148,7 +150,9 @@ export function Authorities() {
           ) : (
             <ShieldCheck size={18} />
           )}
-          {status.installed ? "Root CA Installed" : "Install Root CA"}
+          {status.installed
+            ? t("authorities.installed")
+            : t("authorities.install")}
         </button>
       </div>
 
@@ -168,16 +172,22 @@ export function Authorities() {
                   )}
                 </div>
                 <div className="ca-title-group">
-                  <h3>mkcert local development CA</h3>
+                  <h3>{t("authorities.caTitle")}</h3>
                   <p>
-                    Trust Store: {status.installed ? "Verified" : "Not Found"}
+                    {t("authorities.trustStore.label", {
+                      status: status.installed
+                        ? t("authorities.trustStore.verified")
+                        : t("authorities.trustStore.notFound"),
+                    })}
                   </p>
                 </div>
                 <div className="ca-status-pill">
                   <span
                     className={`pill ${status.installed ? "success" : "error"}`}
                   >
-                    {status.installed ? "ACTIVE" : "INACTIVE"}
+                    {status.installed
+                      ? t("authorities.status.active")
+                      : t("authorities.status.inactive")}
                   </span>
                 </div>
               </div>
@@ -186,13 +196,13 @@ export function Authorities() {
                 <div className="detail-item">
                   <Folder size={16} />
                   <div className="detail-text">
-                    <label>Storage Location</label>
-                    <code>{status.root_ca || "N/A"}</code>
+                    <label>{t("authorities.storageLocation")}</label>
+                    <code>{status.root_ca || t("common.na")}</code>
                   </div>
                   <button
                     className="icon-btn-sm"
                     onClick={() =>
-                      alert("Opening folder not supported in browser")
+                      alert(t("authorities.openFolderUnsupported"))
                     }
                   >
                     <ExternalLink size={14} />
@@ -204,23 +214,23 @@ export function Authorities() {
                 <div className="footer-top">
                   <div className="validity-indicator">
                     <CheckCircle2 size={16} className="success" />
-                    <span>Trusted by System Browsers</span>
+                    <span>{t("authorities.trustedByBrowsers")}</span>
                   </div>
                   <div className="ca-actions">
                     <button
                       className="btn btn-secondary btn-sm"
                       onClick={handleDownload}
-                      title="Download Root CA Certificate"
+                      title={t("authorities.downloadPemTitle")}
                     >
-                      <Download size={14} /> Download Pem
+                      <Download size={14} /> {t("authorities.downloadPem")}
                     </button>
                     <button
                       className="btn btn-danger btn-sm"
                       onClick={handleUninstall}
                       disabled={loading}
-                      title="Uninstall Root CA from System Trust Store"
+                      title={t("authorities.uninstallTitle")}
                     >
-                      <ShieldOff size={14} /> Uninstall
+                      <ShieldOff size={14} /> {t("authorities.uninstall")}
                     </button>
                   </div>
                 </div>
@@ -232,40 +242,44 @@ export function Authorities() {
           <div className="ca-stats-column">
             <StatCard
               icon={Cpu}
-              label="Engine Version"
-              value={status.mkcert_version || "Not Detected"}
-              subValue="CLI Binary found in PATH"
+              label={t("authorities.stats.engineVersion")}
+              value={status.mkcert_version || t("common.notDetected")}
+              subValue={t("authorities.stats.engineSub")}
             />
             <StatCard
               icon={Calendar}
-              label="Signature Algorithm"
-              value="RSA 2048"
-              subValue="Standard for local development"
+              label={t("authorities.stats.signatureAlg")}
+              value={t("authorities.stats.signatureValue")}
+              subValue={t("authorities.stats.signatureSub")}
             />
             <StatCard
               icon={ShieldCheck}
-              label="Trust Status"
-              value={status.installed ? "Fully Trusted" : "Fix Required"}
+              label={t("authorities.stats.trustStatus")}
+              value={
+                status.installed
+                  ? t("authorities.stats.trusted")
+                  : t("authorities.stats.fixRequired")
+              }
               statusColor={status.installed ? "#4caf50" : "#f44336"}
             />
           </div>
         </div>
 
         <div className="settings-section">
-          <h3>System Details</h3>
+          <h3>{t("authorities.systemDetails")}</h3>
           <div className="settings-grid">
             <div className="detail-item">
               <Folder size={16} />
               <div className="detail-text">
-                <label>Root CA Location</label>
-                <code>{status.root_ca || "N/A"}</code>
+                <label>{t("authorities.rootCaLocation")}</label>
+                <code>{status.root_ca || t("common.na")}</code>
               </div>
             </div>
             <div className="detail-item">
               <Folder size={16} />
               <div className="detail-text">
-                <label>Certificate Storage Path</label>
-                <code>{status.cert_path || "N/A"}</code>
+                <label>{t("authorities.certStoragePath")}</label>
+                <code>{status.cert_path || t("common.na")}</code>
               </div>
             </div>
           </div>
@@ -273,15 +287,9 @@ export function Authorities() {
 
         <div className="help-section">
           <h3>
-            <Info size={18} /> How it works
+            <Info size={18} /> {t("authorities.helpTitle")}
           </h3>
-          <p>
-            The <code>mkcert</code> authority generates a unique root
-            certificate stored on your computer. By installing it, your local
-            browsers and operating system will recognize any certificates
-            generated through this dashboard as legitimate and secure,
-            eliminating "Your connection is not private" errors.
-          </p>
+          <p>{t("authorities.helpBody")}</p>
           <div className="help-actions">
             <button
               className="btn btn-secondary btn-sm"
@@ -289,7 +297,7 @@ export function Authorities() {
                 window.open("https://github.com/FiloSottile/mkcert", "_blank")
               }
             >
-              View Documentation <ExternalLink size={14} />
+              {t("authorities.viewDocs")} <ExternalLink size={14} />
             </button>
           </div>
         </div>

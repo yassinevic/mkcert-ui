@@ -1,0 +1,189 @@
+{
+  "common": {
+    "na": "N/A",
+    "notDetected": "Not Detected",
+    "unknownError": "Unknown error"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Overview of your local certificates",
+    "totalCertificates": "Total Certificates",
+    "expiringSoon": "Expiring Soon",
+    "loading": "Loading data..."
+  },
+  "archive": {
+    "title": "Archive",
+    "subtitle": "Restore or permanently delete old certificates.",
+    "comingSoon": "Archive functionality is coming soon."
+  },
+  "certificates": {
+    "title": "Certificate Health Overview",
+    "subtitle": "Visual status tracking for local SSL certificates",
+    "exportAll": "Export All",
+    "createNew": "Create New Certificate",
+    "searchPlaceholder": "Filter by domain or name...",
+    "filter": {
+      "all": "All",
+      "healthy": "Healthy",
+      "expiring": "Expiring",
+      "expired": "Expired"
+    },
+    "actions": {
+      "renew": "Renew",
+      "export": "Export",
+      "delete": "Delete"
+    },
+    "status": {
+      "label": "Status",
+      "unknown": "Unknown",
+      "expired": "Expired",
+      "expiring": "Expiring",
+      "healthy": "Healthy"
+    },
+    "validity": {
+      "expiredOn": "Expired on",
+      "validUntil": "Valid until",
+      "inDays": "In {days} days",
+      "daysAgo": "{days} days ago"
+    },
+    "modal": {
+      "title": "Create New Certificate",
+      "subtitle": "Generate locally-trusted SSL certificates.",
+      "domainsLabel": "Domains / IP Addresses",
+      "addDomainPlaceholder": "Add domain...",
+      "trustTitle": "Local Trust Store Detected",
+      "trustBody": "Certificates will be automatically trusted by your system browsers.",
+      "cancel": "Cancel",
+      "generating": "Generating...",
+      "generate": "Generate Certificate"
+    },
+    "alerts": {
+      "enterDomain": "Please enter at least one domain or IP address",
+      "createFail": "Failed to create certificate: {error}",
+      "renewFail": "Failed to renew certificate: {error}",
+      "exportFail": "Failed to export certificates: {error}",
+      "deleteFail": "Failed to delete certificate"
+    },
+    "terminal": {
+      "createCommand": "mkcert {domains}",
+      "creating": "Creating certificate for: {domains}...",
+      "createSuccess": "✓ Certificate created successfully",
+      "validFor": "Valid for {count} domain{plural}",
+      "createFail": "✗ Failed to create certificate",
+      "error": "Error: {error}",
+      "renewCommand": "mkcert -renew {name}",
+      "renewing": "Renewing certificate for: {name}...",
+      "renewSuccess": "✓ Certificate renewed successfully",
+      "renewFail": "✗ Failed to renew certificate",
+      "exportAllCommand": "mkcert -export-all",
+      "exportingAll": "Exporting all certificates...",
+      "exportStarted": "✓ Export download started ({filename})",
+      "exportFail": "✗ Failed to export certificates",
+      "deleteCommand": "mkcert -delete {name}",
+      "deleting": "Removing certificate files for {name}...",
+      "deleteSuccess": "✓ Certificate deleted successfully",
+      "deleteFail": "✗ Failed to delete certificate"
+    },
+    "confirm": {
+      "delete": "Are you sure you want to delete the certificate for \"{name}\"?"
+    },
+    "errors": {
+      "load": "Failed to load certificates:"
+    }
+  },
+  "authorities": {
+    "loading": "Loading Authority data...",
+    "title": "Certificate Authorities",
+    "subtitle": "Management and verification of local trusted roots",
+    "install": "Install Root CA",
+    "installed": "Root CA Installed",
+    "caTitle": "mkcert local development CA",
+    "trustStore": {
+      "label": "Trust Store: {status}",
+      "verified": "Verified",
+      "notFound": "Not Found"
+    },
+    "status": {
+      "active": "ACTIVE",
+      "inactive": "INACTIVE"
+    },
+    "storageLocation": "Storage Location",
+    "openFolderUnsupported": "Opening folder not supported in browser",
+    "trustedByBrowsers": "Trusted by System Browsers",
+    "downloadPem": "Download Pem",
+    "downloadPemTitle": "Download Root CA Certificate",
+    "uninstall": "Uninstall",
+    "uninstallTitle": "Uninstall Root CA from System Trust Store",
+    "stats": {
+      "engineVersion": "Engine Version",
+      "engineSub": "CLI Binary found in PATH",
+      "signatureAlg": "Signature Algorithm",
+      "signatureValue": "RSA 2048",
+      "signatureSub": "Standard for local development",
+      "trustStatus": "Trust Status",
+      "trusted": "Fully Trusted",
+      "fixRequired": "Fix Required"
+    },
+    "systemDetails": "System Details",
+    "rootCaLocation": "Root CA Location",
+    "certStoragePath": "Certificate Storage Path",
+    "helpTitle": "How it works",
+    "helpBody": "The mkcert authority generates a unique root certificate stored on your computer. By installing it, your local browsers and operating system will recognize any certificates generated through this dashboard as legitimate and secure, eliminating \"Your connection is not private\" errors.",
+    "viewDocs": "View Documentation",
+    "terminal": {
+      "installCommand": "mkcert -install",
+      "installing": "Configuring local CA and system trust stores...",
+      "installSuccess": "✓ Root CA installed successfully!",
+      "installFail": "✗ Installation failed",
+      "uninstallCommand": "mkcert -uninstall",
+      "uninstalling": "Removing local CA from system trust stores...",
+      "uninstallSuccess": "✓ Root CA uninstalled successfully",
+      "uninstallFail": "✗ Uninstallation failed"
+    },
+    "alerts": {
+      "installSuccess": "Root CA installed successfully!",
+      "installFail": "Failed to install CA. Please check terminal for details.",
+      "uninstallSuccess": "Root CA uninstalled successfully.",
+      "uninstallFail": "Failed to uninstall CA."
+    },
+    "confirm": {
+      "uninstall": "Are you sure you want to uninstall the local CA? This will make all existing local certificates untrusted."
+    },
+    "errors": {
+      "load": "Failed to load status:",
+      "install": "Installation failed:",
+      "uninstall": "Uninstallation failed:"
+    }
+  },
+  "sidebar": {
+    "links": {
+      "certificates": "Certificates",
+      "authorities": "Authorities"
+    },
+    "brand": "CertFlow",
+    "status": {
+      "notInstalled": "Not installed",
+      "errorConnecting": "Error connecting",
+      "checking": "Checking status..."
+    },
+    "themeToggle": "Switch to {mode} theme",
+    "mode": {
+      "dark": "dark",
+      "light": "light",
+      "darkLabel": "Dark Mode",
+      "lightLabel": "Light Mode"
+    },
+    "rootStatus": "ROOT CA STATUS",
+    "language": {
+      "label": "Language",
+      "en": "English",
+      "fr": "French",
+      "ar": "Arabic"
+    }
+  },
+  "terminal": {
+    "title": "mkcert-cli output",
+    "copyAll": "Copy all",
+    "startup": "mkcert engine ready ⚡️"
+  }
+}

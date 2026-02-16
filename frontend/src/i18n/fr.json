@@ -1,0 +1,189 @@
+{
+  "common": {
+    "na": "N/D",
+    "notDetected": "Non detecte",
+    "unknownError": "Erreur inconnue"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "subtitle": "Vue d'ensemble de vos certificats locaux",
+    "totalCertificates": "Total des certificats",
+    "expiringSoon": "Expire bientot",
+    "loading": "Chargement des donnees..."
+  },
+  "archive": {
+    "title": "Archives",
+    "subtitle": "Restaurer ou supprimer definitivement d'anciens certificats.",
+    "comingSoon": "La fonctionnalite d'archive arrive bientot."
+  },
+  "certificates": {
+    "title": "Apercu de la sante des certificats",
+    "subtitle": "Suivi visuel de l'etat des certificats SSL locaux",
+    "exportAll": "Tout exporter",
+    "createNew": "Creer un nouveau certificat",
+    "searchPlaceholder": "Filtrer par domaine ou nom...",
+    "filter": {
+      "all": "Tous",
+      "healthy": "Sains",
+      "expiring": "Expire bientot",
+      "expired": "Expire"
+    },
+    "actions": {
+      "renew": "Renouveler",
+      "export": "Exporter",
+      "delete": "Supprimer"
+    },
+    "status": {
+      "label": "Statut",
+      "unknown": "Inconnu",
+      "expired": "Expire",
+      "expiring": "Expire bientot",
+      "healthy": "Sain"
+    },
+    "validity": {
+      "expiredOn": "Expire le",
+      "validUntil": "Valide jusqu'au",
+      "inDays": "Dans {days} jours",
+      "daysAgo": "Il y a {days} jours"
+    },
+    "modal": {
+      "title": "Creer un nouveau certificat",
+      "subtitle": "Generer des certificats SSL approuves localement.",
+      "domainsLabel": "Domaines / Adresses IP",
+      "addDomainPlaceholder": "Ajouter un domaine...",
+      "trustTitle": "Magasin de confiance local detecte",
+      "trustBody": "Les certificats seront automatiquement approuves par vos navigateurs.",
+      "cancel": "Annuler",
+      "generating": "Generation...",
+      "generate": "Generer le certificat"
+    },
+    "alerts": {
+      "enterDomain": "Veuillez entrer au moins un domaine ou une adresse IP",
+      "createFail": "Echec de la creation du certificat : {error}",
+      "renewFail": "Echec du renouvellement du certificat : {error}",
+      "exportFail": "Echec de l'export des certificats : {error}",
+      "deleteFail": "Echec de la suppression du certificat"
+    },
+    "terminal": {
+      "createCommand": "mkcert {domains}",
+      "creating": "Creation du certificat pour : {domains}...",
+      "createSuccess": "✓ Certificat cree avec succes",
+      "validFor": "Valable pour {count} domaine{plural}",
+      "createFail": "✗ Echec de la creation du certificat",
+      "error": "Erreur : {error}",
+      "renewCommand": "mkcert -renew {name}",
+      "renewing": "Renouvellement du certificat pour : {name}...",
+      "renewSuccess": "✓ Certificat renouvele avec succes",
+      "renewFail": "✗ Echec du renouvellement du certificat",
+      "exportAllCommand": "mkcert -export-all",
+      "exportingAll": "Export de tous les certificats...",
+      "exportStarted": "✓ Telechargement de l'export demarre ({filename})",
+      "exportFail": "✗ Echec de l'export des certificats",
+      "deleteCommand": "mkcert -delete {name}",
+      "deleting": "Suppression des fichiers de certificat pour {name}...",
+      "deleteSuccess": "✓ Certificat supprime avec succes",
+      "deleteFail": "✗ Echec de la suppression du certificat"
+    },
+    "confirm": {
+      "delete": "Etes-vous sur de vouloir supprimer le certificat pour \"{name}\" ?"
+    },
+    "errors": {
+      "load": "Echec du chargement des certificats :"
+    }
+  },
+  "authorities": {
+    "loading": "Chargement des donnees d'autorite...",
+    "title": "Autorites de certification",
+    "subtitle": "Gestion et verification des racines de confiance locales",
+    "install": "Installer la CA racine",
+    "installed": "CA racine installee",
+    "caTitle": "CA de developpement local mkcert",
+    "trustStore": {
+      "label": "Magasin de confiance : {status}",
+      "verified": "Verifie",
+      "notFound": "Non trouve"
+    },
+    "status": {
+      "active": "ACTIF",
+      "inactive": "INACTIF"
+    },
+    "storageLocation": "Emplacement de stockage",
+    "openFolderUnsupported": "Ouverture du dossier non prise en charge dans le navigateur",
+    "trustedByBrowsers": "Approuve par les navigateurs systeme",
+    "downloadPem": "Telecharger PEM",
+    "downloadPemTitle": "Telecharger le certificat de la CA racine",
+    "uninstall": "Desinstaller",
+    "uninstallTitle": "Desinstaller la CA racine du magasin de confiance",
+    "stats": {
+      "engineVersion": "Version du moteur",
+      "engineSub": "Binaire CLI trouve dans le PATH",
+      "signatureAlg": "Algorithme de signature",
+      "signatureValue": "RSA 2048",
+      "signatureSub": "Standard pour le developpement local",
+      "trustStatus": "Etat de confiance",
+      "trusted": "Entierement approuve",
+      "fixRequired": "Correction requise"
+    },
+    "systemDetails": "Details systeme",
+    "rootCaLocation": "Emplacement de la CA racine",
+    "certStoragePath": "Chemin de stockage des certificats",
+    "helpTitle": "Comment ca marche",
+    "helpBody": "L'autorite mkcert genere un certificat racine unique stocke sur votre ordinateur. En l'installant, vos navigateurs locaux et votre systeme d'exploitation reconnaitront tout certificat genere via ce tableau de bord comme legitime et securise, eliminant les erreurs \"Votre connexion n'est pas privee\".",
+    "viewDocs": "Voir la documentation",
+    "terminal": {
+      "installCommand": "mkcert -install",
+      "installing": "Configuration de la CA locale et des magasins de confiance...",
+      "installSuccess": "✓ CA racine installee avec succes !",
+      "installFail": "✗ Echec de l'installation",
+      "uninstallCommand": "mkcert -uninstall",
+      "uninstalling": "Suppression de la CA locale des magasins de confiance...",
+      "uninstallSuccess": "✓ CA racine desinstallee avec succes",
+      "uninstallFail": "✗ Echec de la desinstallation"
+    },
+    "alerts": {
+      "installSuccess": "CA racine installee avec succes !",
+      "installFail": "Echec de l'installation de la CA. Veuillez consulter le terminal.",
+      "uninstallSuccess": "CA racine desinstallee avec succes.",
+      "uninstallFail": "Echec de la desinstallation de la CA."
+    },
+    "confirm": {
+      "uninstall": "Etes-vous sur de vouloir desinstaller la CA locale ? Cela rendra tous les certificats locaux existants non approuves."
+    },
+    "errors": {
+      "load": "Echec du chargement de l'etat :",
+      "install": "Echec de l'installation :",
+      "uninstall": "Echec de la desinstallation :"
+    }
+  },
+  "sidebar": {
+    "links": {
+      "certificates": "Certificats",
+      "authorities": "Autorites"
+    },
+    "brand": "CertFlow",
+    "status": {
+      "notInstalled": "Non installe",
+      "errorConnecting": "Erreur de connexion",
+      "checking": "Verification du statut..."
+    },
+    "themeToggle": "Basculer vers le theme {mode}",
+    "mode": {
+      "dark": "sombre",
+      "light": "clair",
+      "darkLabel": "Mode sombre",
+      "lightLabel": "Mode clair"
+    },
+    "rootStatus": "STATUT DE LA CA RACINE",
+    "language": {
+      "label": "Langue",
+      "en": "Anglais",
+      "fr": "Francais",
+      "ar": "Arabe"
+    }
+  },
+  "terminal": {
+    "title": "Sortie mkcert-cli",
+    "copyAll": "Tout copier",
+    "startup": "moteur mkcert pret ⚡️"
+  }
+}

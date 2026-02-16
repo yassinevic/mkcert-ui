@@ -1,4 +1,5 @@
 import type { AxiosError } from "axios";
+import { t } from "../i18n";
 
 type ApiErrorPayload = {
   error?: string;
@@ -9,6 +10,6 @@ export const getApiErrorMessage = (error: unknown): string => {
   return (
     axiosError.response?.data?.error ||
     axiosError.message ||
-    "Unknown error"
+    t("common.unknownError")
   );
 };

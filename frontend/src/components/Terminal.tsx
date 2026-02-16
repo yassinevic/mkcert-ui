@@ -1,6 +1,7 @@
 import { useTerminal } from "../hooks/useTerminal";
 import { X, Copy, Terminal as TerminalIcon } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import { t } from "../i18n";
 import "./Terminal.css";
 
 export function Terminal() {
@@ -52,7 +53,7 @@ export function Terminal() {
             ></span>
           </div>
           <TerminalIcon size={14} className="terminal-icon-main" />
-          <span className="terminal-label">mkcert-cli output</span>
+          <span className="terminal-label">{t("terminal.title")}</span>
         </div>
         <div className="terminal-actions">
           <button
@@ -61,7 +62,7 @@ export function Terminal() {
               e.stopPropagation();
               copyToClipboard();
             }}
-            title="Copy all"
+            title={t("terminal.copyAll")}
           >
             <Copy size={14} />
           </button>

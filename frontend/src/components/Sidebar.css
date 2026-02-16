@@ -72,6 +72,36 @@ nav {
   border-top: 1px solid var(--border-color);
 }
 
+.locale-switcher {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.locale-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.locale-select {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  width: 100%;
+}
+
+.locale-select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
 .theme-toggle {
   display: flex;
   align-items: center;

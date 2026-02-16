@@ -1,0 +1,189 @@
+{
+  "common": {
+    "na": "غير متوفر",
+    "notDetected": "غير مكتشف",
+    "unknownError": "خطأ غير معروف"
+  },
+  "dashboard": {
+    "title": "لوحة التحكم",
+    "subtitle": "نظرة عامة على الشهادات المحلية",
+    "totalCertificates": "إجمالي الشهادات",
+    "expiringSoon": "تنتهي قريبا",
+    "loading": "جار تحميل البيانات..."
+  },
+  "archive": {
+    "title": "الأرشيف",
+    "subtitle": "استعادة أو حذف الشهادات القديمة نهائيا.",
+    "comingSoon": "ميزة الأرشفة قادمة قريبا."
+  },
+  "certificates": {
+    "title": "نظرة عامة على صحة الشهادات",
+    "subtitle": "تتبع مرئي لحالة شهادات SSL المحلية",
+    "exportAll": "تصدير الكل",
+    "createNew": "إنشاء شهادة جديدة",
+    "searchPlaceholder": "تصفية حسب النطاق أو الاسم...",
+    "filter": {
+      "all": "الكل",
+      "healthy": "سليمة",
+      "expiring": "ستنتهي قريبا",
+      "expired": "منتهية"
+    },
+    "actions": {
+      "renew": "تجديد",
+      "export": "تصدير",
+      "delete": "حذف"
+    },
+    "status": {
+      "label": "الحالة",
+      "unknown": "غير معروف",
+      "expired": "منتهية",
+      "expiring": "ستنتهي قريبا",
+      "healthy": "سليمة"
+    },
+    "validity": {
+      "expiredOn": "انتهت في",
+      "validUntil": "صالحة حتى",
+      "inDays": "بعد {days} يوم",
+      "daysAgo": "منذ {days} يوم"
+    },
+    "modal": {
+      "title": "إنشاء شهادة جديدة",
+      "subtitle": "إنشاء شهادات SSL موثوقة محليا.",
+      "domainsLabel": "النطاقات / عناوين IP",
+      "addDomainPlaceholder": "أضف نطاقا...",
+      "trustTitle": "تم اكتشاف مخزن الثقة المحلي",
+      "trustBody": "سيتم الوثوق بالشهادات تلقائيا بواسطة متصفحات النظام.",
+      "cancel": "إلغاء",
+      "generating": "جار الإنشاء...",
+      "generate": "إنشاء الشهادة"
+    },
+    "alerts": {
+      "enterDomain": "يرجى إدخال نطاق واحد على الأقل أو عنوان IP",
+      "createFail": "فشل إنشاء الشهادة: {error}",
+      "renewFail": "فشل تجديد الشهادة: {error}",
+      "exportFail": "فشل تصدير الشهادات: {error}",
+      "deleteFail": "فشل حذف الشهادة"
+    },
+    "terminal": {
+      "createCommand": "mkcert {domains}",
+      "creating": "جار إنشاء شهادة لـ: {domains}...",
+      "createSuccess": "✓ تم إنشاء الشهادة بنجاح",
+      "validFor": "صالحة لـ {count} نطاق{plural}",
+      "createFail": "✗ فشل إنشاء الشهادة",
+      "error": "خطأ: {error}",
+      "renewCommand": "mkcert -renew {name}",
+      "renewing": "جار تجديد الشهادة لـ: {name}...",
+      "renewSuccess": "✓ تم تجديد الشهادة بنجاح",
+      "renewFail": "✗ فشل تجديد الشهادة",
+      "exportAllCommand": "mkcert -export-all",
+      "exportingAll": "جار تصدير جميع الشهادات...",
+      "exportStarted": "✓ بدأ تنزيل التصدير ({filename})",
+      "exportFail": "✗ فشل تصدير الشهادات",
+      "deleteCommand": "mkcert -delete {name}",
+      "deleting": "جار إزالة ملفات الشهادة لـ {name}...",
+      "deleteSuccess": "✓ تم حذف الشهادة بنجاح",
+      "deleteFail": "✗ فشل حذف الشهادة"
+    },
+    "confirm": {
+      "delete": "هل أنت متأكد من حذف الشهادة الخاصة بـ \"{name}\"؟"
+    },
+    "errors": {
+      "load": "فشل تحميل الشهادات:"
+    }
+  },
+  "authorities": {
+    "loading": "جار تحميل بيانات سلطة الشهادات...",
+    "title": "سلطات الشهادات",
+    "subtitle": "إدارة والتحقق من جذور الثقة المحلية",
+    "install": "تثبيت CA الجذر",
+    "installed": "تم تثبيت CA الجذر",
+    "caTitle": "CA تطوير محلي mkcert",
+    "trustStore": {
+      "label": "مخزن الثقة: {status}",
+      "verified": "موثوق",
+      "notFound": "غير موجود"
+    },
+    "status": {
+      "active": "نشط",
+      "inactive": "غير نشط"
+    },
+    "storageLocation": "موقع التخزين",
+    "openFolderUnsupported": "فتح المجلد غير مدعوم في المتصفح",
+    "trustedByBrowsers": "موثوق من متصفحات النظام",
+    "downloadPem": "تنزيل PEM",
+    "downloadPemTitle": "تنزيل شهادة CA الجذر",
+    "uninstall": "إزالة",
+    "uninstallTitle": "إزالة CA الجذر من مخزن الثقة",
+    "stats": {
+      "engineVersion": "إصدار المحرك",
+      "engineSub": "تم العثور على أداة CLI في PATH",
+      "signatureAlg": "خوارزمية التوقيع",
+      "signatureValue": "RSA 2048",
+      "signatureSub": "معيار للتطوير المحلي",
+      "trustStatus": "حالة الثقة",
+      "trusted": "موثوق بالكامل",
+      "fixRequired": "يتطلب إصلاحا"
+    },
+    "systemDetails": "تفاصيل النظام",
+    "rootCaLocation": "موقع CA الجذر",
+    "certStoragePath": "مسار تخزين الشهادات",
+    "helpTitle": "كيف يعمل",
+    "helpBody": "تقوم سلطة mkcert بإنشاء شهادة جذر فريدة مخزنة على جهازك. عند تثبيتها، ستتعرف متصفحاتك المحلية ونظام التشغيل على أي شهادة يتم إنشاؤها عبر هذه اللوحة على أنها شرعية وآمنة، مما يزيل أخطاء \"اتصالك ليس خاصا\".",
+    "viewDocs": "عرض التوثيق",
+    "terminal": {
+      "installCommand": "mkcert -install",
+      "installing": "جار إعداد CA المحلية ومخازن الثقة...",
+      "installSuccess": "✓ تم تثبيت CA الجذر بنجاح!",
+      "installFail": "✗ فشل التثبيت",
+      "uninstallCommand": "mkcert -uninstall",
+      "uninstalling": "جار إزالة CA المحلية من مخازن الثقة...",
+      "uninstallSuccess": "✓ تم إزالة CA الجذر بنجاح",
+      "uninstallFail": "✗ فشل الإزالة"
+    },
+    "alerts": {
+      "installSuccess": "تم تثبيت CA الجذر بنجاح!",
+      "installFail": "فشل تثبيت CA. يرجى مراجعة الطرفية للتفاصيل.",
+      "uninstallSuccess": "تم إزالة CA الجذر بنجاح.",
+      "uninstallFail": "فشل إزالة CA."
+    },
+    "confirm": {
+      "uninstall": "هل أنت متأكد من إزالة CA المحلية؟ سيؤدي ذلك إلى جعل جميع الشهادات المحلية الحالية غير موثوقة."
+    },
+    "errors": {
+      "load": "فشل تحميل الحالة:",
+      "install": "فشل التثبيت:",
+      "uninstall": "فشل الإزالة:"
+    }
+  },
+  "sidebar": {
+    "links": {
+      "certificates": "الشهادات",
+      "authorities": "السلطات"
+    },
+    "brand": "CertFlow",
+    "status": {
+      "notInstalled": "غير مثبت",
+      "errorConnecting": "خطأ في الاتصال",
+      "checking": "جار التحقق من الحالة..."
+    },
+    "themeToggle": "التبديل إلى النمط {mode}",
+    "mode": {
+      "dark": "داكن",
+      "light": "فاتح",
+      "darkLabel": "الوضع الداكن",
+      "lightLabel": "الوضع الفاتح"
+    },
+    "rootStatus": "حالة CA الجذر",
+    "language": {
+      "label": "اللغة",
+      "en": "الانجليزية",
+      "fr": "الفرنسية",
+      "ar": "العربية"
+    }
+  },
+  "terminal": {
+    "title": "مخرجات mkcert-cli",
+    "copyAll": "نسخ الكل",
+    "startup": "محرك mkcert جاهز ⚡️"
+  }
+}

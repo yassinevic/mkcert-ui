@@ -10,6 +10,7 @@ import {
   downloadCertificate,
 } from "../services/download";
 import { getApiErrorMessage } from "../services/errors";
+import { t } from "../i18n";
 import { useTerminal } from "../hooks/useTerminal";
 import {
   Plus,
@@ -54,7 +55,7 @@ export function Certificates() {
       const data = await getCertificates();
       setCerts(data);
     } catch (error) {
-      console.error("Failed to load certificates:", error);
+      console.error(t("certificates.errors.load"), error);
     }
   };
 
@@ -83,19 +84,32 @@ export function Certificates() {
     }
 
     if (finalDomains.length === 0) {
-      alert("Please enter at least one domain or IP address");
+      alert(t("certificates.alerts.enterDomain"));
       return;
     }
 
     setLoading(true);
-    addMessage(`mkcert ${finalDomains.join(" ")}`, "command");
-    addMessage(`Creating certificate for: ${finalDomains.join(", ")}...`);
+    addMessage(
+      t("certificates.terminal.createCommand", {
+        domains: finalDomains.join(" "),
+      }),
+      "command",
+    );
+    addMessage(
+      t("certificates.terminal.creating", {
+        domains: finalDomains.join(", "),
+      }),
+    );
 
     try {
       await createCertificate(finalDomains, finalDomains[0]);
-      addMessage(`✓ Certificate created successfully`, "success");
+      const plural = finalDomains.length > 1 ? "s" : "";
+      addMessage(t("certificates.terminal.createSuccess"), "success");
       addMessage(
-        `Valid for ${finalDomains.length} domain${finalDomains.length > 1 ? "s" : ""}`,
+        t("certificates.terminal.validFor", {
+          count: finalDomains.length,
+          plural,
+        }),
       );
       setShowModal(false);
       setDomains([]);
@@ -103,9 +117,12 @@ export function Certificates() {
       await loadCerts();
     } catch (error: unknown) {
       const errorMessage = getApiErrorMessage(error);
-      addMessage(`✗ Failed to create certificate`, "error");
-      addMessage(`Error: ${errorMessage}`, "error");
-      alert(`Failed to create certificate: ${errorMessage}`);
+      addMessage(t("certificates.terminal.createFail"), "error");
+      addMessage(
+        t("certificates.terminal.error", { error: errorMessage }),
+        "error",
+      );
+      alert(t("certificates.alerts.createFail", { error: errorMessage }));
     } finally {
       setLoading(false);
     }
@@ -113,18 +130,24 @@ export function Certificates() {
 
   const handleRenew = async (id: number, name: string) => {
     setLoading(true);
-    addMessage(`mkcert -renew ${name}`, "command");
-    addMessage(`Renewing certificate for: ${name}...`);
+    addMessage(
+      t("certificates.terminal.renewCommand", { name }),
+      "command",
+    );
+    addMessage(t("certificates.terminal.renewing", { name }));
 
     try {
       await renewCertificate(id);
-      addMessage(`✓ Certificate renewed successfully`, "success");
+      addMessage(t("certificates.terminal.renewSuccess"), "success");
       await loadCerts();
     } catch (error: unknown) {
       const errorMessage = getApiErrorMessage(error);
-      addMessage(`✗ Failed to renew certificate`, "error");
-      addMessage(`Error: ${errorMessage}`, "error");
-      alert(`Failed to renew certificate: ${errorMessage}`);
+      addMessage(t("certificates.terminal.renewFail"), "error");
+      addMessage(
+        t("certificates.terminal.error", { error: errorMessage }),
+        "error",
+      );
+      alert(t("certificates.alerts.renewFail", { error: errorMessage }));
     } finally {
       setLoading(false);
     }
@@ -135,34 +158,43 @@ export function Certificates() {
   };
 
   const handleDownloadAll = async () => {
-    addMessage("mkcert -export-all", "command");
-    addMessage("Exporting all certificates...");
+    addMessage(t("certificates.terminal.exportAllCommand"), "command");
+    addMessage(t("certificates.terminal.exportingAll"));
 
     try {
       const { filename } = await downloadAllCertificates();
-      addMessage(`✓ Export download started (${filename})`, "success");
+      addMessage(
+        t("certificates.terminal.exportStarted", { filename }),
+        "success",
+      );
     } catch (error: unknown) {
       const errorMessage = getApiErrorMessage(error);
-      addMessage("✗ Failed to export certificates", "error");
-      addMessage(`Error: ${errorMessage}`, "error");
-      alert(`Failed to export certificates: ${errorMessage}`);
+      addMessage(t("certificates.terminal.exportFail"), "error");
+      addMessage(
+        t("certificates.terminal.error", { error: errorMessage }),
+        "error",
+      );
+      alert(t("certificates.alerts.exportFail", { error: errorMessage }));
     }
   };
 
   const handleDelete = async (id: number, name: string) => {
     if (
-      !confirm(`Are you sure you want to delete the certificate for "${name}"?`)
+      !confirm(t("certificates.confirm.delete", { name }))
     )
       return;
-    addMessage(`mkcert -delete ${name}`, "command");
-    addMessage(`Removing certificate files for ${name}...`);
+    addMessage(
+      t("certificates.terminal.deleteCommand", { name }),
+      "command",
+    );
+    addMessage(t("certificates.terminal.deleting", { name }));
     try {
       await deleteCertificate(id);
-      addMessage(`✓ Certificate deleted successfully`, "success");
+      addMessage(t("certificates.terminal.deleteSuccess"), "success");
       await loadCerts();
     } catch {
-      addMessage(`✗ Failed to delete certificate`, "error");
-      alert("Failed to delete certificate");
+      addMessage(t("certificates.terminal.deleteFail"), "error");
+      alert(t("certificates.alerts.deleteFail"));
     }
   };
 
@@ -175,7 +207,12 @@ export function Certificates() {
     percentage: number;
   } => {
     if (!expires_at) {
-      return { type: "expired", label: "Unknown", daysLeft: 0, percentage: 0 };
+      return {
+        type: "expired",
+        label: t("certificates.status.unknown"),
+        daysLeft: 0,
+        percentage: 0,
+      };
     }
 
     const expiry = new Date(expires_at);
@@ -196,20 +233,20 @@ export function Certificates() {
     if (daysUntilExpiry < 0)
       return {
         type: "expired",
-        label: "Expired",
+        label: t("certificates.status.expired"),
         daysLeft: daysUntilExpiry,
         percentage: 0,
       };
     if (daysUntilExpiry < 30)
       return {
         type: "expiring",
-        label: "Expiring",
+        label: t("certificates.status.expiring"),
         daysLeft: daysUntilExpiry,
         percentage,
       };
     return {
       type: "healthy",
-      label: "Healthy",
+      label: t("certificates.status.healthy"),
       daysLeft: daysUntilExpiry,
       percentage,
     };
@@ -230,18 +267,18 @@ export function Certificates() {
       <div className="page-header">
         <div className="header-top">
           <div className="header-title">
-            <h1>Certificate Health Overview</h1>
-            <p>Visual status tracking for local SSL certificates</p>
+            <h1>{t("certificates.title")}</h1>
+            <p>{t("certificates.subtitle")}</p>
           </div>
           <div className="header-actions">
             <button className="btn btn-secondary" onClick={handleDownloadAll}>
-              <Download size={18} /> Export All
+              <Download size={18} /> {t("certificates.exportAll")}
             </button>
             <button
               className="btn btn-primary"
               onClick={() => setShowModal(true)}
             >
-              <Plus size={18} /> Create New Certificate
+              <Plus size={18} /> {t("certificates.createNew")}
             </button>
           </div>
         </div>
@@ -251,7 +288,7 @@ export function Certificates() {
             <Search size={18} className="search-icon" />
             <input
               type="text"
-              placeholder="Filter by domain or name..."
+              placeholder={t("certificates.searchPlaceholder")}
               className="input"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -262,25 +299,25 @@ export function Certificates() {
               className={`pill-btn ${statusFilter === "all" ? "active all" : ""}`}
               onClick={() => setStatusFilter("all")}
             >
-              All
+              {t("certificates.filter.all")}
             </button>
             <button
               className={`pill-btn ${statusFilter === "healthy" ? "active healthy" : ""}`}
               onClick={() => setStatusFilter("healthy")}
             >
-              Healthy
+              {t("certificates.filter.healthy")}
             </button>
             <button
               className={`pill-btn ${statusFilter === "expiring" ? "active expiring" : ""}`}
               onClick={() => setStatusFilter("expiring")}
             >
-              Expiring
+              {t("certificates.filter.expiring")}
             </button>
             <button
               className={`pill-btn ${statusFilter === "expired" ? "active expired" : ""}`}
               onClick={() => setStatusFilter("expired")}
             >
-              Expired
+              {t("certificates.filter.expired")}
             </button>
           </div>
           <button className="icon-btn" onClick={loadCerts}>
@@ -307,7 +344,9 @@ export function Certificates() {
                     )}
                   </div>
                   <div className="card-status-info">
-                    <span className="status-label-top">Status</span>
+                    <span className="status-label-top">
+                      {t("certificates.status.label")}
+                    </span>
                     <span className={`status-pill ${status.type}`}>
                       <span className="status-dot"></span>
                       {status.label.toUpperCase()}
@@ -320,29 +359,29 @@ export function Certificates() {
                     className="card-action-btn"
                     onClick={() => handleRenew(cert.id, cert.name)}
                     disabled={loading}
-                    title="Renew"
+                    title={t("certificates.actions.renew")}
                   >
                     <RefreshCw
                       size={20}
                       className={loading ? "animate-spin" : ""}
                     />
-                    <span>Renew</span>
+                    <span>{t("certificates.actions.renew")}</span>
                   </button>
                   <button
                     className="card-action-btn"
                     onClick={() => handleDownload(cert.id)}
-                    title="Export"
+                    title={t("certificates.actions.export")}
                   >
                     <Download size={20} />
-                    <span>Export</span>
+                    <span>{t("certificates.actions.export")}</span>
                   </button>
                   <button
                     className="card-action-btn danger"
                     onClick={() => handleDelete(cert.id, cert.name)}
-                    title="Delete"
+                    title={t("certificates.actions.delete")}
                   >
                     <Trash2 size={20} />
-                    <span>Delete</span>
+                    <span>{t("certificates.actions.delete")}</span>
                   </button>
                 </div>
 
@@ -354,13 +393,17 @@ export function Certificates() {
                     <div className="info-row">
                       <span className="info-label">
                         {status.type === "expired"
-                          ? "Expired on"
-                          : "Valid until"}
+                          ? t("certificates.validity.expiredOn")
+                          : t("certificates.validity.validUntil")}
                       </span>
                       <span className={`info-value ${status.type}`}>
                         {status.daysLeft >= 0
-                          ? `In ${status.daysLeft} days`
-                          : `${Math.abs(status.daysLeft)} days ago`}
+                          ? t("certificates.validity.inDays", {
+                              days: status.daysLeft,
+                            })
+                          : t("certificates.validity.daysAgo", {
+                              days: Math.abs(status.daysLeft),
+                            })}
                       </span>
                     </div>
                   </div>
@@ -386,8 +429,8 @@ export function Certificates() {
                 <ShieldCheck size={22} />
               </div>
               <div className="modal-title">
-                <h2>Create New Certificate</h2>
-                <p>Generate locally-trusted SSL certificates.</p>
+                <h2>{t("certificates.modal.title")}</h2>
+                <p>{t("certificates.modal.subtitle")}</p>
               </div>
               <button className="close-btn" onClick={() => setShowModal(false)}>
                 <X size={20} />
@@ -395,7 +438,9 @@ export function Certificates() {
             </div>
             <div className="modal-body">
               <div className="form-group">
-                <label className="form-label">Domains / IP Addresses</label>
+                <label className="form-label">
+                  {t("certificates.modal.domainsLabel")}
+                </label>
                 <div className="tag-input-container">
                   {domains.map((d) => (
                     <span key={d} className="tag">
@@ -408,7 +453,7 @@ export function Certificates() {
                   <input
                     type="text"
                     className="tag-input"
-                    placeholder="Add domain..."
+                    placeholder={t("certificates.modal.addDomainPlaceholder")}
                     value={domainInput}
                     onChange={(e) => setDomainInput(e.target.value)}
                     onKeyDown={handleAddDomain}
@@ -420,11 +465,8 @@ export function Certificates() {
                   <Info size={20} />
                 </div>
                 <div className="info-callout-content">
-                  <h4>Local Trust Store Detected</h4>
-                  <p>
-                    Certificates will be automatically trusted by your system
-                    browsers.
-                  </p>
+                  <h4>{t("certificates.modal.trustTitle")}</h4>
+                  <p>{t("certificates.modal.trustBody")}</p>
                 </div>
               </div>
             </div>
@@ -433,14 +475,16 @@ export function Certificates() {
                 className="btn btn-secondary"
                 onClick={() => setShowModal(false)}
               >
-                Cancel
+                {t("certificates.modal.cancel")}
               </button>
               <button
                 className="btn btn-primary"
                 onClick={handleCreate}
                 disabled={loading}
               >
-                {loading ? "Generating..." : "Generate Certificate"}
+                {loading
+                  ? t("certificates.modal.generating")
+                  : t("certificates.modal.generate")}
               </button>
             </div>
           </div>
