@@ -559,11 +559,10 @@ app.delete('/api/certificates/:id', async (req: Request, res: Response) => {
 
 // Basic catch-all for SPA (serve index.html for any unknown route)
 if (process.env.NODE_ENV === 'production') {
-    app.get('/:path*', (req: Request, res: Response) => {
+    app.use((req: Request, res: Response, next) => {
         // Don't intercept API calls if they somehow fall through (though they are defined before)
         if (req.path.startsWith('/api')) {
-            logger.warn('API route not found', { path: req.path, method: req.method });
-            return res.status(404).json({ error: 'Not found' });
+            return next();
         }
         res.sendFile(path.join(__dirname, '../public/index.html'));
     });
