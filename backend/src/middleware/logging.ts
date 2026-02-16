@@ -61,8 +61,12 @@ export function requestLoggingMiddleware(req: Request, res: Response, next: Next
     // Capture response
     const originalSend = res.send;
     const originalJson = res.json;
+    let responseLogged = false;
     
     const logResponse = () => {
+        if (responseLogged) return; // Prevent duplicate logging
+        responseLogged = true;
+        
         const duration = Date.now() - (req.startTime || Date.now());
         const responseInfo = {
             requestId: req.requestId,
