@@ -1,12 +1,6 @@
 import { NavLink } from "react-router-dom";
-import {
-  ShieldCheck,
-  FileText,
-  Settings,
-  Award,
-  Moon,
-  Sun,
-} from "lucide-react";
+import { Logo } from "./Logo";
+import { FileText, Settings, Award, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getStatus } from "../services/api";
 import { useTheme } from "../hooks/useTheme";
@@ -42,9 +36,9 @@ export function Sidebar() {
     <aside className="sidebar">
       <div className="brand">
         <div className="brand-icon">
-          <ShieldCheck size={20} />
+          <Logo size={32} />
         </div>
-        <h1>mkcert UI</h1>
+        <h1>CertFlow</h1>
       </div>
       <nav>
         {links.map((link) => (
